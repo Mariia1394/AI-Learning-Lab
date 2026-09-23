@@ -824,7 +824,7 @@ def get_image_base64(path):
     </style>
     """,
     unsafe_allow_html=True,
-)
+
 
 st.markdown(
     """
