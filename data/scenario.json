@@ -1,0 +1,23 @@
+{
+  "title": "Désamorcer une situation client difficile",
+  "context": "L'apprenant travaille dans un service client. Il doit gérer une cliente mécontente concernant une commande livrée en retard.",
+  "learner_role": "Conseiller ou conseillère clientèle",
+  "client_name": "Nadia",
+  "client_problem": "La commande de Nadia devait être livrée lundi. Nous sommes jeudi et elle n'a toujours rien reçu. Elle a déjà contacté le service client mais estime que sa demande n'a pas été prise en compte.",
+  "initial_emotion": "colère",
+  "initial_tension": 8,
+  "learning_objectives": [
+    "Adopter une posture professionnelle face à un client mécontent",
+    "Faire preuve d'empathie",
+    "Reformuler la demande du client",
+    "Rechercher une solution adaptée",
+    "Désamorcer progressivement la tension"
+  ],
+  "evaluation_criteria": {
+    "empathy": 2,
+    "reformulation": 2,
+    "professional_posture": 2,
+    "solution": 2,
+    "tension_management": 2
+  }
+}
