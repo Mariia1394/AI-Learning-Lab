@@ -11,7 +11,7 @@ from evaluation import final_evaluator
 # CONFIGURATION STREAMLIT
 # ============================================================
 
-st.set_page_config(page_title="AI Learning Lab", page_icon="✦", layout="wide")
+st.set_page_config(page_title="Le Labo IA", page_icon="✦", layout="wide")
 
 # ============================================================
 # GESTION DE LA NAVIGATION
