@@ -288,6 +288,10 @@ def show_debrief_page():
 # FONCTION : PAGE SIMULATION
 # ============================================================
 
+# ============================================================
+# FONCTION : PAGE SIMULATION (Animation de frappe fluide)
+# ============================================================
+
 def show_simulation_page():
     st.markdown(
         """
@@ -344,6 +348,7 @@ def show_simulation_page():
     st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
     st.subheader("💬 Fil de Discussion")
 
+    # Affichage de tous les messages du fil de discussion
     for message in simulation["conversation"]:
         if message["role"] == "assistant":
             with st.chat_message("assistant", avatar="👤"):
@@ -359,17 +364,19 @@ def show_simulation_page():
             st.session_state["conversation_finale"] = simulation["conversation"]
             go_to_page("debrief", "Préparation de votre bilan", emoji="🏆", task="run_evaluator")
 
-        result = run_async(
-            send_message(
-                prompt,
-                simulation["conversation"],
-                simulation["tension"],
-                simulation["confiance"],
-                simulation["ecoute"],
+        # Indicateur visuel pendant que la réponse d'Alex se génère
+        with st.spinner("👤 Alex est en train de rédiger sa réponse..."):
+            result = run_async(
+                send_message(
+                    prompt,
+                    simulation["conversation"],
+                    simulation["tension"],
+                    simulation["confiance"],
+                    simulation["ecoute"],
+                )
             )
-        )
-        st.session_state["simulation"] = result
-        st.rerun()
+            st.session_state["simulation"] = result
+            st.rerun()
 
 # ============================================================
 # ROUTEUR DE PAGES PRINCIPAL
