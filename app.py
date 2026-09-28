@@ -379,6 +379,50 @@ def show_simulation_page():
             with st.chat_message("user", avatar="🧑‍💼"):
                 st.markdown(f"<div style='background: #fff7ed; padding: 16px 20px; border-radius: 18px; border: 1px solid #fed7aa; color: #9a3412;'><b>Vous :</b> {message['content']}</div>", unsafe_allow_html=True)
 
+    prompt = st.chat_input("Écrivez votre réponse à Alex ici... ✍️")
+
+    if prompt:
+        if prompt.strip().lower() == "terminer":
+            st.session_state["conversation_finale"] = simulation["conversation"]
+            go_to_page("debrief", "Préparation de votre bilan", emoji="🏆", task="run_evaluator")
+
+        # 1. Afficher votre message tout de suite à l'écran
+        with st.chat_message("user", avatar="🧑‍💼"):
+            st.markdown(f"<div style='background: #fff7ed; padding: 16px 20px; border-radius: 18px; border: 1px solid #fed7aa; color: #9a3412;'><b>Vous :</b> {prompt}</div>", unsafe_allow_html=True)
+
+        # 2. Afficher l'animation des 3 petits points juste après
+        typing_placeholder = st.empty()
+        typing_placeholder.markdown(
+            """
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px;">
+                <div style="background: #e2e8f0; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">👤</div>
+                <div class="typing-indicator">
+                    <span style="font-size: 13px; color: #64748b; font-weight: 600; margin-right: 8px;">Alex est en train de rédiger sa réponse</span>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        # 3. Appel de l'IA en arrière-plan
+        result = run_async(
+            send_message(
+                prompt,
+                simulation["conversation"],
+                simulation["tension"],
+                simulation["confiance"],
+                simulation["ecoute"],
+            )
+        )
+
+        # 4. Nettoyage de l'animation et rafraîchissement
+        typing_placeholder.empty()
+        st.session_state["simulation"] = result
+        st.rerun()
+
 # ============================================================
 # ROUTEUR DE PAGES PRINCIPAL
 # ============================================================
