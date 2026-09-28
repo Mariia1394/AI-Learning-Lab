@@ -285,11 +285,7 @@ def show_debrief_page():
             go_to_page("accueil", "Retour à l'accueil", emoji="🏠", clear_keys=["simulation", "conversation_finale", "evaluation_result"])
 
 # ============================================================
-# FONCTION : PAGE SIMULATION
-# ============================================================
-
-# ============================================================
-# FONCTION : PAGE SIMULATION (Animation de frappe fluide)
+# FONCTION : PAGE SIMULATION (Avec animation des 3 petits points)
 # ============================================================
 
 def show_simulation_page():
@@ -303,6 +299,33 @@ def show_simulation_page():
         .metric-card-wahou {
             background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 20px;
             text-align: center; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.02);
+        }
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            background: #ffffff;
+            padding: 12px 18px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 12px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+            border: 1px solid #f1f5f9;
+        }
+        .typing-dot {
+            height: 7px;
+            width: 7px;
+            margin: 0 2.5px;
+            background-color: #cbd5e1;
+            border-radius: 50%;
+            display: inline-block;
+            animation: wave 1.3s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: -1.1s; }
+        .typing-dot:nth-child(3) { animation-delay: -0.9s; }
+
+        @keyframes wave {
+            0%, 60%, 100% { transform: translateY(0); background-color: #cbd5e1; }
+            30% { transform: translateY(-5px); background-color: #f97316; }
         }
         </style>
         """,
@@ -348,7 +371,6 @@ def show_simulation_page():
     st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
     st.subheader("💬 Fil de Discussion")
 
-    # Affichage de tous les messages du fil de discussion
     for message in simulation["conversation"]:
         if message["role"] == "assistant":
             with st.chat_message("assistant", avatar="👤"):
@@ -364,19 +386,38 @@ def show_simulation_page():
             st.session_state["conversation_finale"] = simulation["conversation"]
             go_to_page("debrief", "Préparation de votre bilan", emoji="🏆", task="run_evaluator")
 
-        # Indicateur visuel pendant que la réponse d'Alex se génère
-        with st.spinner("👤 Alex est en train de rédiger sa réponse..."):
-            result = run_async(
-                send_message(
-                    prompt,
-                    simulation["conversation"],
-                    simulation["tension"],
-                    simulation["confiance"],
-                    simulation["ecoute"],
-                )
+        # Conteneur temporaire pour afficher l'animation des 3 points avant la réponse
+        typing_placeholder = st.empty()
+        typing_placeholder.markdown(
+            """
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px;">
+                <div style="background: #e2e8f0; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">👤</div>
+                <div class="typing-indicator">
+                    <span style="font-size: 13px; color: #64748b; font-weight: 600; margin-right: 8px;">Alex est en train de rédiger sa réponse</span>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        # Appel de l'IA
+        result = run_async(
+            send_message(
+                prompt,
+                simulation["conversation"],
+                simulation["tension"],
+                simulation["confiance"],
+                simulation["ecoute"],
             )
-            st.session_state["simulation"] = result
-            st.rerun()
+        )
+
+        # On efface l'animation et on met à jour l'état
+        typing_placeholder.empty()
+        st.session_state["simulation"] = result
+        st.rerun()
 
 # ============================================================
 # ROUTEUR DE PAGES PRINCIPAL
